@@ -1,5 +1,3 @@
-// Improved JS: Added timer extension, localStorage for high score, error handling, progress updates, and better UX(e.g., disable options after selection)
-// All code is modular, commented, and uses const/let appropriately.
 const quizData = [
     {
         question: "What does 'let' declare in JavaScript?",
@@ -39,6 +37,12 @@ let selectedAnswer = -1;
 let timerInterval; // For per-question timer
 let timeLeft = 30; // 30 seconds per question
 let highScore = localStorage.getItem('jsQuizHighScore') || 0;
+
+function startQuiz() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('quiz-container').style.display = 'block';
+    loadQuestion();  // NOW the quiz begins
+}
 
 // Utility: Update progress bar
 function updateProgress() {
@@ -155,27 +159,47 @@ function nextQuestion() {
         showScore();
     }
 }
+function updateScoreCircle(percentage) {
+  const circle = document.querySelector('.progress-ring__circle');
+  const radius = circle.r.baseVal.value;
+  const circumference = 2 * Math.PI * radius;
+
+  circle.style.strokeDasharray = `${circumference} ${circumference}`;
+  circle.style.strokeDashoffset = circumference;
+
+  const offset = circumference - (percentage / 100) * circumference;
+  circle.style.strokeDashoffset = offset;
+
+  const scoreText = document.querySelector('.score-circle-text');
+  scoreText.textContent = `${percentage}%`;
+
+  const scoreCircle = document.querySelector('.score-circle');
+  scoreCircle.setAttribute('aria-valuenow', percentage);
+}
 function showScore() {
     clearTimer();
     document.getElementById('question-container').style.display = 'none';
     document.getElementById('score-container').style.display = 'block';
     const percentage = Math.round((score / totalQuestions) * 100);
-    document.getElementById('score-circle-text').textContent = score;
-    document.getElementById('total-score').textContent = totalQuestions;
+
+    updateScoreCircle(percentage);
+    document.querySelector('.score-circle-text').textContent = percentage + '%';
+
     let feedback = '';
     if (percentage >= 80) feedback = "Outstanding! You're a JavaScript wizard. 🌟";
     else if (percentage >= 60) feedback = "Well done! Keep practicing those concepts. 👍";
     else feedback = "Good start—dive back into the lecture notes for a refresh. 📚";
+
     document.getElementById('feedback').textContent = feedback;
-    // Extension: High score
+
     if (score > highScore) {
         highScore = score;
         localStorage.setItem('jsQuizHighScore', highScore);
         document.getElementById('high-score').style.display = 'block';
         document.getElementById('high-score-val').textContent = highScore;
-
     }
 }
+
 function restartQuiz() {
     currentQuestion = 0;
     score = 0;
@@ -185,7 +209,6 @@ function restartQuiz() {
     document.getElementById('question-container').style.display = 'block';
     document.getElementById('score-container').style.display = 'none';
     document.getElementById('high-score').style.display = 'none';
-    // Reset progress bar and start fresh
     document.getElementById('progress-fill').style.width = '0%';
     document.getElementById('current-q').textContent = 1;
     document.getElementById('timer-fill').style.width = '100%';
@@ -193,4 +216,6 @@ function restartQuiz() {
     loadQuestion();
 }
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', loadQuestion);
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('start-btn').addEventListener('click', startQuiz);
+});

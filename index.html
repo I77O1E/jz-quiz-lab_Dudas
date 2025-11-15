@@ -10,7 +10,11 @@
 </head>
 
 <body>
-    <div id="quiz-container">
+    <div id="start-screen">
+    <h1>JavaScript Quiz Challenge</h1>
+    <button id="start-btn">Play</button>
+</div>
+    <div id="quiz-container" style="display:none;">
         <header>
             <h1 id="quiz-title">JavaScript Quiz Challenge</h1>
             <div id="progress-bar">
@@ -32,20 +36,18 @@
             <button id="next-btn" style="display: none;" onclick="nextQuestion()">Next
                 Question</button>
         </main>
-        <div id="score-container" style="display: none;">
-            <div class="score-circle">
-                <span id="score-circle-text">0</span>
-                <p>/ <span id="total-score">0</span></p>
+        <div id="score-container" style="display:none;">
+            <div class="score-circle" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Quiz score">
+                <svg class="progress-ring" width="150" height="150">
+                    <circle class="progress-ring__circle" stroke="green" stroke-width="10" fill="transparent" r="65" cx="75" cy="75" />
+                </svg>
+                <span class="score-circle-text">0%</span>
             </div>
             <h2>Your Score</h2>
             <p id="feedback">Great job! Review weak spots in the notes.</p>
-
-            <p id="high-score" style="display: none;">High Score: <span id="high-score-val">0</span></p>
-
+            <p id="high-score" style="display:none">High Score: <span id="high-score-val">0</span></p>
             <button onclick="restartQuiz()">Play Again</button>
         </div>
-    </div>
-    <script src="script.js"></script>
+        <script src="script.js"></script>
 </body>
-
 </html>
